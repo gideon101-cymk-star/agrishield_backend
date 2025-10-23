@@ -15,20 +15,21 @@ connectDB();
 
 const app = express();
 
-// Middleware
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false })); // ✅ Important for USSD
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: false })); // ✅ Needed for USSD POST requests
 
-// API routes
+// normal routes
 app.use("/api/auth", authRoutes);
 app.use("/api/insurance", insuranceRoutes);
 app.use("/api/claims", claimRoutes);
 app.use("/api/climate", climateRoutes);
 app.use("/api/risk", riskRoutes);
 
-// ✅ USSD Endpoint
+// ✅ USSD route
 app.post("/ussd", (req, res) => {
+  console.log("Incoming USSD Request:", req.body); // ✅ for testing (you'll see it in Render logs)
+  
   const { sessionId, serviceCode, phoneNumber, text } = req.body;
   let response = "";
 
@@ -57,6 +58,5 @@ app.post("/ussd", (req, res) => {
   res.send(response);
 });
 
-// Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
